@@ -24,7 +24,9 @@ public class OpenFile {
             intent.setDataAndType(uri, "image/jpeg");
         }else if (uri.toString().toLowerCase().contains(".mp4")) {
             intent.setDataAndType(uri, "video/*");
-        }else {
+        } else if (uri.toString().toLowerCase().contains(".apk")){
+            intent.setDataAndType(uri,"application/vnd.android.package-archive");
+        } else {
             intent.setDataAndType(uri, "*/*");
         }
 

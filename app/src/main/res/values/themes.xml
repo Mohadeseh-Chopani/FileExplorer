@@ -6,4 +6,10 @@
     </style>
 
     <style name="Theme.FileExplorer" parent="Base.Theme.FileExplorer" />
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/colorSecondPrimary</item>
+        <item name="colorButtonNormal">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>

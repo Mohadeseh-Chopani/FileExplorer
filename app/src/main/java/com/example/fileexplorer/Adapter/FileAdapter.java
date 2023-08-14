@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,6 +32,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         this.clickListener=clickListener;
     }
 
+    public void deleteFile(File file) {
+        int index = list.indexOf(file);
+        list.remove(index);
+        notifyItemRemoved(index);
+    }
     public void addFile(File file){
         list.add(0,file);
         notifyItemInserted(0);
@@ -74,6 +81,27 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     clickListener.onClickFile(file);
                 }
             });
+
+
+            btn_more.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popupMenu=new PopupMenu(v.getContext(),v);
+                    popupMenu.getMenuInflater().inflate(R.menu.menu, popupMenu.getMenu());
+                    popupMenu.show();
+
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+
+                            if(item.getItemId() == R.id.btn_delete){
+                                clickListener.DeleteFile(file);
+                            }
+                            return false;
+                        }
+                    });
+                }
+            });
         }
 
 
@@ -105,6 +133,9 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             else if (file.getName().toLowerCase().endsWith(".txt")) {
                 img_icon.setImageResource(R.drawable.text);
             }
+            else if (file.getName().toLowerCase().endsWith(".apk")) {
+                img_icon.setImageResource(R.drawable.apk);
+            }
             title.setText(file.getName());
         }
     }
@@ -112,5 +143,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
    public interface ClickListener{
         void onClickFile(File file);
+        void DeleteFile(File file);
+        void CopyFile(File file);
+        void MoveFile(File file);
     }
 }

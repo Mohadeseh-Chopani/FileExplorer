@@ -1,6 +1,8 @@
 package com.example.fileexplorer;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -130,6 +132,35 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
         }else {
             OpenFile.openFile(getContext(),file);
         }
+
+    }
+
+    @Override
+    public void DeleteFile(File file) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogTheme);
+
+        builder.setTitle("Are you sure you want to delete?!");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(file.delete()){
+                    fileAdapter.deleteFile(file);
+                }
+            }
+        });
+        builder.setIcon(R.drawable.baseline_delete_outline_24);
+
+        builder.create().show();
+    }
+
+    @Override
+    public void CopyFile(File file) {
+
+    }
+
+    @Override
+    public void MoveFile(File file) {
 
     }
 }
