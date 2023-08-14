@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_page"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimary"
+        android:id="@+id/app_bar">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="12dp"
+            android:clipToPadding="false"
+            android:layout_marginBottom="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/colorPrimaryDark"
+                android:fontFamily="@font/primary_bold"
+                android:textSize="18sp"
+                android:layout_marginEnd="8dp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_add_folder_white_24dp"
+                android:layout_gravity="end"
+                android:id="@+id/btn_add_folder"
+                app:tint="@color/colorPrimaryDark" />
+        </FrameLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/input_layout"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="8dp"
+            app:startIconDrawable="@drawable/ic_search_gray_24dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="Search File"
+                android:id="@+id/et_search"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        app:checkedButton="@id/btn_main_list"
+        app:singleSelection="true"
+        android:id="@+id/toggle_group"
+        app:selectionRequired="true"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:layout_marginBottom="24dp"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:layout_marginTop="18dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_main_list"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            app:cornerRadius="8dp"
+            android:backgroundTint="#EDE6D8"
+            app:iconSize="20dp"
+            app:iconTint="@color/colorPrimaryDark"
+            app:icon="@drawable/ic_list_black_24dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_main_grid"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            app:cornerRadius="8dp"
+            app:iconSize="20dp"
+            android:backgroundTint="#EDE6D8"
+            app:iconTint="@color/colorPrimaryDark"
+            app:icon="@drawable/ic_grid_black_24dp" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_folder"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:layout_marginTop="96dp"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
