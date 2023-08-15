@@ -23,6 +23,7 @@ import java.util.List;
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
 
     ClickListener clickListener;
+    boolean status=false;
     List<File> list=new ArrayList<>();
     Context context;
 
@@ -82,7 +83,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                 }
             });
 
-
             btn_more.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -96,6 +96,12 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
                             if(item.getItemId() == R.id.btn_delete){
                                 clickListener.DeleteFile(file);
+                            } else if (item.getItemId() == R.id.btn_copy) {
+                                clickListener.CopyFile(file);
+                                status = true;
+                            } else if (item.getItemId() == R.id.btn_move) {
+                                clickListener.MoveFile(file);
+                                status = true;
                             }
                             return false;
                         }

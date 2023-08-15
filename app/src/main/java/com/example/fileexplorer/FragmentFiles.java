@@ -19,11 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.fileexplorer.Adapter.FileAdapter;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +38,9 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
     public String path;
     List<File>fileList;
 
-    FileAdapter fileAdapter;
+    File filePath;
+  public FileAdapter fileAdapter;
+    String currentPath;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,7 +65,7 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
         rv_files.setHasFixedSize(true);
         rv_files.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false));
         fileList=new ArrayList<>();
-        File filePath=new File(path);
+        filePath=new File(path);
         fileList.addAll(FindFiles(filePath));
         fileAdapter=new FileAdapter(fileList,getContext(),this);
         rv_files.setAdapter(fileAdapter);
@@ -110,18 +115,20 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
                 file.getName().toLowerCase().endsWith(".pdf") || file.getName().toLowerCase().endsWith(".doc") ||
                 file.getName().toLowerCase().endsWith(".txt"))
         {
-            if(!file.exists()){
-                if(file.createNewFile()){
-                    fileAdapter.addFile(file);
-                    rv_files.smoothScrollToPosition(0);
-                }
+            if(file.exists()){
+
+                FileExists(file);
+
+            }else {
+                add(file);
             }
         }
-        if(!file.exists()){
-            if(file.mkdir()){
-                fileAdapter.addFile(file);
-                rv_files.smoothScrollToPosition(0);
-            }
+
+        if (file.exists()){
+            FileExists(file);
+        }
+        else {
+            add(file);
         }
     }
 
@@ -133,34 +140,149 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
             OpenFile.openFile(getContext(),file);
         }
 
+        currentPath=file.getAbsolutePath();
     }
 
     @Override
     public void DeleteFile(File file) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyDialogTheme);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.MyDialogTheme);
 
-        builder.setTitle("Are you sure you want to delete?!");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(file.delete()){
-                    fileAdapter.deleteFile(file);
+            builder.setTitle("Are you sure you want to delete?!");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(file.isDirectory()){
+                        deleteDirectory(file);
+                        fileAdapter.deleteFile(file);
+                    }
+                    else {
+                        if (file.delete()) {
+                            fileAdapter.deleteFile(file);
+                        }
+                    }
                 }
-            }
-        });
-        builder.setIcon(R.drawable.baseline_delete_outline_24);
+            });
+            builder.setIcon(R.drawable.baseline_delete_outline_24);
 
-        builder.create().show();
+            builder.create().show();
     }
 
     @Override
     public void CopyFile(File file) {
 
+        Snackbar snackbar = Snackbar.make(getView(),"where you want to copy",Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("Copy", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File current = new File(currentPath+File.separator+file.getName());
+                try {
+                    copyDirectory(file,current);
+                    CreateFile(file.getName());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
+        snackbar.show();
     }
 
     @Override
     public void MoveFile(File file) {
 
+        Snackbar snackbar = Snackbar.make(getView(),"where you want to move",Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("Move", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File current = new File(currentPath+File.separator+file.getName());
+                try {
+                    moveDirectory(file,current);
+                    CreateFile(file.getName());
+                    if(file.delete())
+                        fileAdapter.deleteFile(file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
+        snackbar.show();
+    }
+
+
+    public static void copyDirectory(File source, File destination) throws IOException {
+        if (!destination.exists()) {
+            destination.mkdirs();
+        }
+
+        File[] files = source.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    copyDirectory(file, new File(destination, file.getName()));
+                } else {
+                    copyFile(file, new File(destination, file.getName()));
+                }
+            }
+        }
+    }
+
+
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+        try (FileChannel sourceChannel = new FileInputStream(sourceFile).getChannel();
+             FileChannel destChannel = new FileOutputStream(destFile).getChannel()) {
+            destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+        }
+    }
+
+    public static void moveDirectory(File sourceDir, File destDir) throws IOException {
+        copyDirectory(sourceDir, destDir);
+        deleteDirectory(sourceDir);
+    }
+
+    public static void deleteDirectory(File dir) {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        dir.delete();
+    }
+
+    public void FileExists(File file){
+        if (file.exists()) {
+            AlertDialog.Builder builder=new AlertDialog.Builder(getContext(),R.style.MyDialogTheme);
+
+            builder.setTitle(" You can not this file is Exists!!");
+            builder.setPositiveButton("I know", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        add(file);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+
+            builder.create().show();
+        }
+    }
+
+    public void add(File file) throws IOException {
+        if(file.createNewFile()) {
+            fileAdapter.addFile(file);
+            rv_files.smoothScrollToPosition(0);
+        }
+        if (file.mkdir()){
+            fileAdapter.addFile(file);
+            rv_files.smoothScrollToPosition(0);
+        }
     }
 }
