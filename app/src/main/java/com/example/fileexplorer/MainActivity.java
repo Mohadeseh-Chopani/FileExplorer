@@ -7,9 +7,12 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -22,6 +25,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AddNewFolder{
 
+    TextInputEditText et_search;
     ImageView btn_add;
     File path;
     @SuppressLint("MissingInflatedId")
@@ -30,9 +34,33 @@ public class MainActivity extends AppCompatActivity implements AddNewFolder{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btn_add = findViewById(R.id.btn_add_folder);
-
         path = getExternalFilesDir(null);
+
+        btn_add = findViewById(R.id.btn_add_folder);
+        et_search = findViewById(R.id.et_search);
+
+
+        et_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_folder);
+                if (fragment instanceof FragmentFiles){
+                    ((FragmentFiles)fragment).Search(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
 
 
         runtimepermissions();
@@ -85,9 +113,11 @@ public class MainActivity extends AppCompatActivity implements AddNewFolder{
 
     @Override
     public void add_folder(String name) throws IOException {
+        if(StorageHelper.isExternalStorageWritable()){
         Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.fragment_folder);
         if(fragment instanceof FragmentFiles) {
-            ((FragmentFiles)fragment).CreateFile(name);
+            ((FragmentFiles) fragment).CreateFile(name);
+        }
         }
     }
 }

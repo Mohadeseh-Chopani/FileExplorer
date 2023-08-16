@@ -113,22 +113,19 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
         if(file.getName().toLowerCase().endsWith(".mp3") || file.getName().toLowerCase().endsWith(".mp4") || file.getName().toLowerCase().endsWith(".png") ||
                 file.getName().toLowerCase().endsWith(".jpeg") || file.getName().toLowerCase().endsWith(".jpg") || file.getName().toLowerCase().endsWith(".wav") ||
                 file.getName().toLowerCase().endsWith(".pdf") || file.getName().toLowerCase().endsWith(".doc") ||
-                file.getName().toLowerCase().endsWith(".txt"))
-        {
-            if(file.exists()){
-
-                FileExists(file);
-
-            }else {
-                add(file);
+                file.getName().toLowerCase().endsWith(".txt") || file.getName().toLowerCase().endsWith(".apk")) {
+            if (!file.exists()) {
+                if (file.createNewFile()) {
+                    fileAdapter.addFile(file);
+                    rv_files.smoothScrollToPosition(0);
+                }
             }
         }
-
-        if (file.exists()){
-            FileExists(file);
-        }
-        else {
-            add(file);
+        if(!file.exists()) {
+            if (file.mkdir()) {
+                fileAdapter.addFile(file);
+                rv_files.smoothScrollToPosition(0);
+            }
         }
     }
 
@@ -177,7 +174,11 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
             public void onClick(View v) {
                 File current = new File(currentPath+File.separator+file.getName());
                 try {
-                    copyDirectory(file,current);
+                    if(file.isFile()){
+                        copy(file,current);
+                    }else {
+                        copyDirectory(file, current);
+                    }
                     CreateFile(file.getName());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -197,7 +198,12 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
             public void onClick(View v) {
                 File current = new File(currentPath+File.separator+file.getName());
                 try {
-                    moveDirectory(file,current);
+                    if(file.isFile()){
+                        copy(file,current);
+                        deleteDirectory(file);
+                    }else {
+                        moveDirectory(file,current);
+                    }
                     CreateFile(file.getName());
                     if(file.delete())
                         fileAdapter.deleteFile(file);
@@ -214,6 +220,10 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
     public static void copyDirectory(File source, File destination) throws IOException {
         if (!destination.exists()) {
             destination.mkdirs();
+        }
+
+        if(source.isFile()){
+            copyFile(source,destination);
         }
 
         File[] files = source.listFiles();
@@ -284,5 +294,24 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
             fileAdapter.addFile(file);
             rv_files.smoothScrollToPosition(0);
         }
+    }
+
+    public void Search(String query){
+        if (fileAdapter != null) {
+            fileAdapter.searchFile(query);
+        }
+    }
+
+    public void copy(File source, File destination) throws IOException {
+        FileInputStream input=new FileInputStream(source);
+        FileOutputStream output=new FileOutputStream(destination);
+
+        byte[] buffer=new byte[1024];
+        int len;
+        while ((len=input.read(buffer)) > 0){
+            output.write(buffer, 0, len);
+        }
+        input.close();
+        output.close();
     }
 }

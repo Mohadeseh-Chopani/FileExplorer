@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -21,6 +22,7 @@ import java.util.Objects;
 public class DialogAdd extends DialogFragment {
 
     AddNewFolder addNewFolder;
+    TextInputLayout inputLayout;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -40,6 +42,7 @@ public class DialogAdd extends DialogFragment {
 
         et_add=view.findViewById(R.id.et_add);
         btn_add=view.findViewById(R.id.btn_add);
+        inputLayout=view.findViewById(R.id.input_layout_add);
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,6 +54,8 @@ public class DialogAdd extends DialogFragment {
                         throw new RuntimeException(e);
                     }
                     dismiss();
+                }else {
+                    inputLayout.setError("Name box is empty!");
                 }
             }
         });

@@ -24,13 +24,33 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     ClickListener clickListener;
     boolean status=false;
+
+    List<File>fileFilter=new ArrayList<>();
     List<File> list=new ArrayList<>();
     Context context;
 
     public FileAdapter(List<File> list, Context context,ClickListener clickListener) {
         this.list = list;
+        this.fileFilter=this.list;
         this.context = context;
         this.clickListener=clickListener;
+    }
+
+    public void searchFile(String query){
+        if(query.length() > 0){
+            List<File>result=new ArrayList<>();
+            for (File item:list) {
+                if(item.getName().toLowerCase().contains(query)){
+                    result.add(item);
+                }
+            }
+            this.fileFilter=result;
+            notifyDataSetChanged();
+        }
+        else {
+            this.fileFilter=this.list;
+            notifyDataSetChanged();
+        }
     }
 
     public void deleteFile(File file) {
@@ -50,13 +70,13 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return fileFilter.size();
     }
 
     @Override
     public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
 
-        holder.bind(list.get(position));
+        holder.bind(fileFilter.get(position));
     }
 
     public class FileViewHolder extends RecyclerView.ViewHolder{
