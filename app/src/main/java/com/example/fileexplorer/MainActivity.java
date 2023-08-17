@@ -12,6 +12,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -26,6 +28,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements AddNewFolder{
 
     TextInputEditText et_search;
+    MaterialButton btn_list,btn_grid;
+    MaterialButtonToggleGroup toggleGroup;
     ImageView btn_add;
     File path;
     @SuppressLint("MissingInflatedId")
@@ -38,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements AddNewFolder{
 
         btn_add = findViewById(R.id.btn_add_folder);
         et_search = findViewById(R.id.et_search);
+        toggleGroup = findViewById(R.id.toggle_group);
+        btn_list = findViewById(R.id.btn_main_list);
+        btn_grid = findViewById(R.id.btn_main_grid);
 
 
         et_search.addTextChangedListener(new TextWatcher() {
@@ -62,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements AddNewFolder{
         });
 
 
-
         runtimepermissions();
 
 
@@ -71,6 +77,27 @@ public class MainActivity extends AppCompatActivity implements AddNewFolder{
             public void onClick(View v) {
                 DialogAdd dialogAdd=new DialogAdd();
                 dialogAdd.show(getSupportFragmentManager(),null);
+            }
+        });
+
+
+        toggleGroup.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+
+                if (checkedId == R.id.btn_main_list && isChecked){
+                    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_folder);
+                    if (fragment instanceof FragmentFiles){
+                        ((FragmentFiles) fragment).setView(ViewType.ROW);
+
+                    }
+                } else if (checkedId == R.id.btn_main_grid && isChecked){
+                    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_folder);
+                    if (fragment instanceof FragmentFiles){
+                        ((FragmentFiles) fragment).setView(ViewType.GRID);
+                    }
+                }
             }
         });
     }

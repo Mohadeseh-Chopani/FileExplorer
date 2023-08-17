@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fileexplorer.R;
+import com.example.fileexplorer.ViewType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     ClickListener clickListener;
     boolean status=false;
 
+    ViewType viewType=ViewType.ROW;
     List<File>fileFilter=new ArrayList<>();
     List<File> list=new ArrayList<>();
     Context context;
@@ -65,7 +67,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     @NonNull
     @Override
     public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new FileViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recyclearview,parent,false));
+        return new FileViewHolder(LayoutInflater.from(parent.getContext()).inflate(
+                viewType == ViewType.ROW.getValue() ? R.layout.item_recyclearview_row : R.layout.item_recyclearview_grid,parent,false));
     }
 
     @Override
@@ -167,7 +170,17 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     }
 
 
-   public interface ClickListener{
+    public void setViewType(ViewType viewType){
+        this.viewType=viewType;
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return viewType.getValue();
+    }
+
+    public interface ClickListener{
         void onClickFile(File file);
         void DeleteFile(File file);
         void CopyFile(File file);

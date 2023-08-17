@@ -42,6 +42,8 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
   public FileAdapter fileAdapter;
     String currentPath;
 
+    GridLayoutManager gridLayoutManager;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,8 +64,11 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
         btn_back = view.findViewById(R.id.btn_back);
         text_path = view.findViewById(R.id.text_path);
 
-        rv_files.setHasFixedSize(true);
-        rv_files.setLayoutManager(new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false));
+
+        gridLayoutManager = new GridLayoutManager(getContext(),1,RecyclerView.VERTICAL,false);
+
+        rv_files.setHasFixedSize(false);
+        rv_files.setLayoutManager(gridLayoutManager);
         fileList=new ArrayList<>();
         filePath=new File(path);
         fileList.addAll(FindFiles(filePath));
@@ -313,5 +318,17 @@ public class FragmentFiles extends Fragment implements FileAdapter.ClickListener
         }
         input.close();
         output.close();
+    }
+
+
+    public void setView(ViewType viewType){
+        fileAdapter.setViewType(viewType);
+        if (viewType == ViewType.GRID){
+            gridLayoutManager.setSpanCount(2);
+            int i = rv_files.getWidth() * 2;
+        }
+        else {
+            gridLayoutManager.setSpanCount(1);
+        }
     }
 }

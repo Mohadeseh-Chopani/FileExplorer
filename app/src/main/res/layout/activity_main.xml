@@ -65,11 +65,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        app:checkedButton="@id/btn_main_list"
         app:singleSelection="true"
         android:id="@+id/toggle_group"
         app:selectionRequired="true"
-        android:backgroundTint="@color/colorPrimaryDark"
+        app:checkedButton="@id/btn_main_list"
         android:layout_marginBottom="24dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:layout_marginTop="18dp">
@@ -79,8 +78,10 @@
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             app:cornerRadius="8dp"
-            android:backgroundTint="#EDE6D8"
+            android:backgroundTint="@color/colorPrimary"
             app:iconSize="20dp"
+            android:clickable="true"
+            android:checkable="true"
             app:iconTint="@color/colorPrimaryDark"
             app:icon="@drawable/ic_list_black_24dp" />
 
@@ -90,7 +91,7 @@
             android:layout_height="wrap_content"
             app:cornerRadius="8dp"
             app:iconSize="20dp"
-            android:backgroundTint="#EDE6D8"
+            android:backgroundTint="@color/colorPrimary"
             app:iconTint="@color/colorPrimaryDark"
             app:icon="@drawable/ic_grid_black_24dp" />
 
